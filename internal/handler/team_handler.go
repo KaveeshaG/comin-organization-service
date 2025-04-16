@@ -179,12 +179,15 @@ func (h *TeamHandler) AddMember(c *gin.Context) {
 		return
 	}
 
-	if err := h.teamService.AddMember(orgID, teamID, req.UserID, req.Role); err != nil {
+	err = h.teamService.AddMember(orgID, teamID, req.UserID, req.Role)
+	if err != nil {
 		c.Error(errors.NewInternalServerError("failed to add team member"))
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Team member added successfully",
+	})
 }
 
 func (h *TeamHandler) DeleteMember(c *gin.Context) {

@@ -132,6 +132,35 @@ func (s *teamService) AddMember(orgID, teamID, userID uuid.UUID, role string) er
 	return s.teamRepo.AddMember(member)
 }
 
+// func (s *teamService) Create(orgID uuid.UUID, req *domain.TeamRequest) (*domain.Team, error) {
+// 	team := &domain.Team{
+// 		OrganizationID: orgID,
+// 		DepartmentID:   req.DepartmentID,
+// 		Name:           req.Name,
+// 		Description:    req.Description,
+// 		LeadID:         req.LeadID,
+// 		Status:         "active",
+// 	}
+
+// 	if err := s.teamRepo.Create(team); err != nil {
+// 		return nil, err
+// 	}
+
+// 	// If team lead is specified, add them as a member with "lead" role
+// 	if team.LeadID != nil {
+// 		member := &domain.TeamMember{
+// 			TeamID: team.ID,
+// 			UserID: *team.LeadID,
+// 			Role:   "lead",
+// 		}
+// 		if err := s.teamRepo.AddMember(member); err != nil {
+// 			return nil, err
+// 		}
+// 	}
+
+// 	return team, nil
+// }
+
 func (s *teamService) RemoveMember(orgID, teamID, userID uuid.UUID) error {
 	// Verify team belongs to organization
 	if _, err := s.GetByID(orgID, teamID); err != nil {

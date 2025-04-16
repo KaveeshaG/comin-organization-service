@@ -50,7 +50,7 @@ func (c *AuthClient) ValidateToken(token string) (*UserClaims, error) {
 	log.Printf("Validating token: %s", token)
 
 	token = strings.TrimPrefix(token, "Bearer ")
-	
+
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/validate", c.baseURL), nil)
 	if err != nil {
 		log.Printf("Error creating request: %v", err)
@@ -180,7 +180,6 @@ func (m *AuthMiddleware) RequireAuth(c *gin.Context) {
 		return
 	}
 
-	// Set claims in context for later use
 	c.Set("user_id", claims.UserID)
 	c.Set("org_id", claims.OrganizationID)
 	c.Set("email", claims.Email)
@@ -191,12 +190,26 @@ func (m *AuthMiddleware) RequireAuth(c *gin.Context) {
 
 func (m *AuthMiddleware) RequireOrganizationAccess(c *gin.Context) {
 	token := c.GetHeader("Authorization")
-	orgID := c.Param("org_id") // Make sure this matches your route parameter
+	orgID := c.Param("org_id")
 
 	log.Printf("Checking access - Token: %s, OrgID: %s", token, orgID)
 
-	if err := m.authClient.VerifyOrganizationAccess(token, orgID); err != nil {
-		log.Printf("Access verification failed: %v", err)
+	claims, err := m.authClient.ValidateToken(token)
+	if err != nil {
+		log.Printf("Token validation failed: %v", err)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, ErrorResponse{Error: "invalid token"})
+		return
+	}
+
+	if claims.Role == "admin" {
+		log.Printf("Admin role detected, bypassing organization check")
+		c.Next()
+		return
+	}
+
+	if claims.OrganizationID != orgID {
+		log.Printf("Access verification failed: user %s from org %s attempted to access org %s",
+			claims.UserID, claims.OrganizationID, orgID)
 		c.AbortWithStatusJSON(http.StatusForbidden, ErrorResponse{Error: "no access to this organization"})
 		return
 	}
