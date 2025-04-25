@@ -11,5 +11,5 @@ RUN apk --no-cache add ca-certificates tzdata
 WORKDIR /app
 COPY --from=builder /app/main /app/organization-service
 ENV GO_ENV=development
-EXPOSE 8080
+EXPOSE 8081
 CMD ["/app/organization-service"]
