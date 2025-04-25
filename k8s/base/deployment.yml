@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: comin-organization-service
-        image: ghcr.io/kaveeshag/comin-organization-service:dev
+        image: ghcr.io/kaveeshag/comin-organization-service:bcd24864dee5063ded0137c10f7b8b692aede0f1
         imagePullPolicy: Always
         ports:
         - containerPort: 8081
