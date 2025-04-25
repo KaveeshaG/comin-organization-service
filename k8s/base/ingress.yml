@@ -9,7 +9,7 @@ spec:
   - host: comin.kaveeshagimhana.com
     http:
       paths:
-      - path: /
+      - path: /api/v1/organizations
         pathType: Prefix
         backend:
           service:
