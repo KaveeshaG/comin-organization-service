@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: comin-organization-service-ingress
+  namespace: comin-dev
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: comin.kaveeshagimhana.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: comin-organization-service
+            port:
+              number: 80

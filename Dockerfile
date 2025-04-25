@@ -1,34 +1,15 @@
-# Use an official Golang image to build our application
-FROM golang:1.16 AS builder
-
-# Set the GOPATH to /app
-ENV GOPATH=/app
-
-# Move to /app
+FROM golang:1.22.12-alpine AS builder
 WORKDIR /app
-
-# Copy go.mod and go.sum
+RUN apk add --no-cache git
+ENV GO111MODULE=on
 COPY go.mod go.sum ./
-
-# Download dependencies
 RUN go mod download
-
-# Copy the source code
 COPY . .
-
-# Build the application
 RUN go build -o main ./cmd/server
-
-# Use an official Alpine Linux image for the production environment
-FROM alpine:latest
-
-# Move to /app
+FROM alpine:3.18
+RUN apk --no-cache add ca-certificates tzdata
 WORKDIR /app
-
-# Copy the binary from the builder
-COPY --from=builder /app/main .
-
-# Expose the port
-EXPOSE 8081
-
-CMD ["./main"]
+COPY --from=builder /app/main /app/organization-service
+ENV GO_ENV=development
+EXPOSE 8080
+CMD ["/app/organization-service"]

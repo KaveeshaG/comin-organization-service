@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comin-organization-service
+  namespace: comin-dev
+  labels:
+    app: comin-organization-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: comin-organization-service
+  template:
+    metadata:
+      labels:
+        app: comin-organization-service
+    spec:
+      containers:
+      - name: comin-organization-service
+        image: ghcr.io/kaveeshag/comin-organization-service:dev
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8081
+        env:
+        - name: GO_ENV
+          value: "development"
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+          requests:
+            cpu: "0.2"
+            memory: "256Mi"

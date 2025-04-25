@@ -98,7 +98,7 @@ func (app *Application) initializeDependencies() {
 }
 
 func setupRouter(app *Application) *gin.Engine {
-	authClient := auth.NewAuthClient("http://localhost:8080/api/v1/auth")
+	authClient := auth.NewAuthClient("https://comin.kaveeshagimhana.com/api/v1/auth")
 	authMiddleware := auth.NewAuthMiddleware(authClient)
 
 	router := gin.New()
